@@ -94,13 +94,13 @@ namespace HyperCrawlX.Services.Strategies
                     }
                 }
 
-
+                _logger.LogInformation($"DynamicJavascriptStrategy - Visited {visitedLinks.Count} pages, Found {productUrls.Count} product URLs");
                 return productUrls;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"DynamicJavascriptStrategy - Error occurred while crawling {url}: {ex.Message}");
-                return null;
+                throw;
             }
             finally
             {

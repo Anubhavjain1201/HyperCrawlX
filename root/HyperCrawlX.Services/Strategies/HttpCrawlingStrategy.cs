@@ -26,10 +26,8 @@ namespace HyperCrawlX.Services.Strategies
                 visitedLinks.Add(url);
 
                 // TODO: Also add maximum page visit limit
-                while (queue.Count > 0)
+                while (queue.TryDequeue(out var currentUrl))
                 {
-                    queue.TryDequeue(out var currentUrl);
-
                     if (ProductPatternMatching.isProductUrl(currentUrl))
                     {
                         _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {url}");

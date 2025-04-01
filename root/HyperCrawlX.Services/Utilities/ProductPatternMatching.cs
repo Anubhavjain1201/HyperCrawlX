@@ -26,11 +26,8 @@ namespace HyperCrawlX.Services.Utilities
         /// </summary>
         /// <param name="url"></param>
         /// <returns>true, if the <paramref name="url"/> is a product url, else false</returns>
-        public static bool isProductUrl(string? url)
+        public static bool isProductUrl(string url)
         {
-            if (url is null)
-                return false;
-
             // Check if the URL matches any product pattern
             var isProductUrl = _productPatterns.Any(pattern => Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase));
 
