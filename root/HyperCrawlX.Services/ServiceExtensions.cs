@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Services
+namespace HyperCrawlX.Services
 {
     public static class ServiceExtensions
     {

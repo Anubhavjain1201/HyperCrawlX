@@ -1,4 +1,4 @@
-﻿namespace Services.Strategies
+﻿namespace HyperCrawlX.Services.Strategies
 {
     public interface ICrawlingStrategy
     {

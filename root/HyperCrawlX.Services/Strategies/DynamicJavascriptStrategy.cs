@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Playwright;
 
-namespace Services.Strategies
+namespace HyperCrawlX.Services.Strategies
 {
     public class DynamicJavascriptStrategy : ICrawlingStrategy
     {
@@ -21,6 +21,8 @@ namespace Services.Strategies
                 {
 
                 }
+
+                return new List<string>();
             }
             catch (Exception ex)
             {

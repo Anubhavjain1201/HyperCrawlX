@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Services
+namespace HyperCrawlX.Services
 {
     public class CrawlingService : ICrawlingService
     {

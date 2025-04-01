@@ -1,5 +1,6 @@
 using HyperCrawlX.BackgroundWorkers;
-using Services;
+using HyperCrawlX.DAL;
+using HyperCrawlX.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.RegisterServices();
+builder.Services.RegisterDbDependencies();
 builder.Services.AddHostedService<AsyncCrawler>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

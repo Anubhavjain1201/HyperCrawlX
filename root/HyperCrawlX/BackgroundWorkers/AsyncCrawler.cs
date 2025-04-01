@@ -1,4 +1,4 @@
-﻿using Services;
+﻿using HyperCrawlX.Services;
 
 namespace HyperCrawlX.BackgroundWorkers
 {
@@ -28,6 +28,7 @@ namespace HyperCrawlX.BackgroundWorkers
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             ICrawlingService crawlingService = scope.ServiceProvider.GetRequiredService<ICrawlingService>();
+                            IsCurrentlyProcessing = true;
                             crawlingService.ProcessCrawlRequest();
                         }
                     }

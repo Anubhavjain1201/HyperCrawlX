@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\HyperCrawlX.DAL\HyperCrawlX.DAL.csproj" />
+    <ProjectReference Include="..\HyperCrawlX.Services\HyperCrawlX.Services.csproj" />
   </ItemGroup>
 
 </Project>
