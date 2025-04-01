@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HyperCrawlX.DAL.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HyperCrawlX.DAL
 {
@@ -7,6 +8,7 @@ namespace HyperCrawlX.DAL
         public static IServiceCollection RegisterDbDependencies(this IServiceCollection services)
         {
             services.AddSingleton<IDbConnectionManager, DbConnectionManager>();
+            services.AddScoped<IDbContext, DbContext>();
             return services;
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace HyperCrawlX.DAL
+﻿namespace HyperCrawlX.DAL.Constants
 {
     public static class DbConstants
     {

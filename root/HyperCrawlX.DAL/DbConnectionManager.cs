@@ -1,9 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HyperCrawlX.DAL.Constants;
+using HyperCrawlX.DAL.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace HyperCrawlX.DAL
 {
+    /// <summary>
+    /// Manages database connections
+    /// </summary>
     public class DbConnectionManager : IDbConnectionManager
     {
         private readonly ILogger<DbConnectionManager> _logger;
@@ -12,7 +17,7 @@ namespace HyperCrawlX.DAL
         private readonly string _connectionString;
 
         public DbConnectionManager(
-            ILogger<DbConnectionManager> logger, 
+            ILogger<DbConnectionManager> logger,
             IConfiguration configuration)
         {
             _logger = logger;
@@ -30,6 +35,7 @@ namespace HyperCrawlX.DAL
             {
                 _logger.LogInformation("DbConnectionManager - Creating db connection");
                 var dbConnection = await _dataSource.OpenConnectionAsync();
+                _logger.LogInformation("DbConnectionManager - Db connection created");
                 return dbConnection;
             }
             catch (Exception ex)
@@ -39,10 +45,14 @@ namespace HyperCrawlX.DAL
             }
         }
 
+        /// <summary>
+        /// Method to create connection string
+        /// </summary>
         private string GetConnectionString()
         {
             _logger.LogInformation("DbConnectionManager - Creating connection string");
-            
+
+            // Get the Db credentials from environment variables or appsettings.json
             var host = Environment.GetEnvironmentVariable(DbConstants.POSTGRES_HOST) ?? _configuration.GetValue<string>(DbConstants.POSTGRES_HOST);
             var port = Environment.GetEnvironmentVariable(DbConstants.POSTGRES_PORT) ?? _configuration.GetValue<string>(DbConstants.POSTGRES_PORT);
             var db = Environment.GetEnvironmentVariable(DbConstants.POSTGRES_DB) ?? _configuration.GetValue<string>(DbConstants.POSTGRES_DB);

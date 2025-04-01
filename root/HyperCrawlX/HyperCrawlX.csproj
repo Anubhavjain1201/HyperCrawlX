@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HyperCrawlX.DAL\HyperCrawlX.DAL.csproj" />
     <ProjectReference Include="..\HyperCrawlX.Services\HyperCrawlX.Services.csproj" />
   </ItemGroup>
 

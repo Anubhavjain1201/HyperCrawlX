@@ -30,6 +30,12 @@ namespace HyperCrawlX.Services.Strategies
                 {
                     queue.TryDequeue(out var currentUrl);
 
+                    if (ProductPatternMatching.isProductUrl(currentUrl))
+                    {
+                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {url}");
+                        productUrls.Add(url);
+                    }
+
                     HttpResponseMessage? response = null;
                     string html;
                     using (var httpClient = new HttpClient())
@@ -38,9 +44,11 @@ namespace HyperCrawlX.Services.Strategies
                         html = await response.Content.ReadAsStringAsync();
                     }
 
+                    // Parse the HTML content
                     var htmlDocument = new HtmlDocument();
                     htmlDocument.LoadHtml(html);
 
+                    // Get the base URI
                     var baseUri = new Uri(url);
 
                     var discoveredLinks = new HashSet<string>();
@@ -49,10 +57,12 @@ namespace HyperCrawlX.Services.Strategies
                     {
                         foreach (var anchorNode in anchorNodes)
                         {
+                            // Get the href attribute value
                             var href = anchorNode.GetAttributeValue("href", "");
                             if (string.IsNullOrWhiteSpace(href))
                                 continue;
 
+                            // Only consider absolute links from the same domain
                             if (Uri.TryCreate(baseUri, href, out var absoluteUri))
                             {
                                 if (absoluteUri.Host == baseUri.Host)
@@ -60,20 +70,19 @@ namespace HyperCrawlX.Services.Strategies
                             }
                         }
                     }
-
-                    if (ProductPatternMatching.isProductUrl(url))
-                    {
-                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {url}");
-                        productUrls.Add(url);
-                    }
-
+                        
                     foreach (var link in discoveredLinks ?? Enumerable.Empty<string>())
                     {
                         if (!visitedLinks.Contains(link))
+                        {
+                            // Add link to the queue and to the visited set
                             queue.Enqueue(link);
+                            visitedLinks.Add(link);
+                        }
                     }
                 }
 
+                _logger.LogInformation($"HttpCrawlingStrategy - Visited {visitedLinks.Count} pages, Found {productUrls.Count} product URLs");
                 return productUrls;
             }
             catch (Exception ex)
