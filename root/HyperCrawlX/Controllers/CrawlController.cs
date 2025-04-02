@@ -1,29 +1,36 @@
+using HyperCrawlX.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HyperCrawlX.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("hyperCrawlX")]
     public class CrawlController : ControllerBase
     {
         private readonly ILogger<CrawlController> _logger;
+        private readonly ICrawlRequestService _crawlRequestService;
 
-        public CrawlController(ILogger<CrawlController> logger)
+        public CrawlController(
+            ILogger<CrawlController> logger,
+            ICrawlRequestService crawlRequestService)
         {
             _logger = logger;
+            _crawlRequestService = crawlRequestService;
         }
 
 
-        [HttpGet("")]
-        public async Task<IActionResult> GetCrawlStatus()
+        [HttpGet("getRequestStatus")]
+        public async Task<IActionResult> GetCrawlStatus([FromBody] long? requestId)
         {
-            throw new NotImplementedException();
+            var result = await _crawlRequestService.GetCrawlRequestStatus(requestId);
+            return Ok(result);
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> FetchProductLinks()
+        [HttpPost("submitCrawlRequest")]
+        public async Task<IActionResult> SubmitCrawlRequest([FromBody] string? url)
         {
-            throw new NotImplementedException();
+            var result = await _crawlRequestService.SubmitCrawlRequest(url);
+            return Ok(result);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Npgsql;
+﻿using System.Data;
 
 namespace HyperCrawlX.DAL.Interfaces
 {
@@ -10,6 +10,6 @@ namespace HyperCrawlX.DAL.Interfaces
         /// <summary>
         /// Creates and returns a connection to the database.
         /// </summary>
-        Task<NpgsqlConnection> CreateConnection();
+        IDbConnection CreateConnection();
     }
 }

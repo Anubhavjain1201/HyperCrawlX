@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HyperCrawlX.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HyperCrawlX.Services
 {
@@ -7,6 +8,7 @@ namespace HyperCrawlX.Services
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
             services.AddScoped<ICrawlingService, CrawlingService>();
+            services.AddScoped<ICrawlRequestService, CrawlRequestService>();
             return services;
         }
     }

@@ -104,6 +104,7 @@ namespace HyperCrawlX.Services.Strategies
             }
             finally
             {
+                // Dispose off the resources
                 if (page != null)
                 {
                     await page.CloseAsync();

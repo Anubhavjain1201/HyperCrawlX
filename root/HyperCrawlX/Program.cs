@@ -1,6 +1,8 @@
 using HyperCrawlX.BackgroundWorkers;
 using HyperCrawlX.DAL;
 using HyperCrawlX.Services;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +13,17 @@ builder.Services.RegisterServices();
 builder.Services.RegisterDbDependencies();
 builder.Services.AddHostedService<AsyncCrawler>();
 
-//// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+// Use Gzip compression
+builder.Services.Configure<GzipCompressionProviderOptions>
+    (options => options.Level = CompressionLevel.Optimal);
+builder.Services.AddResponseCompression(options =>
+{
+    options.Providers.Add<GzipCompressionProvider>();
+    options.EnableForHttps = true;
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -24,7 +34,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+app.UseResponseCaching();
+app.UseResponseCompression();
 
 app.UseAuthorization();
 

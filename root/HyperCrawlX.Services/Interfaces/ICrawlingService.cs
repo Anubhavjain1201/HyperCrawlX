@@ -1,4 +1,4 @@
-﻿namespace HyperCrawlX.Services
+﻿namespace HyperCrawlX.Services.Interfaces
 {
     public interface ICrawlingService
     {

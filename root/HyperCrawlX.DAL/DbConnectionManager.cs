@@ -3,6 +3,7 @@ using HyperCrawlX.DAL.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using System.Data;
 
 namespace HyperCrawlX.DAL
 {
@@ -24,17 +25,22 @@ namespace HyperCrawlX.DAL
             _configuration = configuration;
             _connectionString = GetConnectionString();
 
+            _logger.LogInformation("DbConnectionManager - Establishing connection to database");
             var dataSourceBuilder = new NpgsqlDataSourceBuilder(_connectionString);
             dataSourceBuilder.EnableParameterLogging();
             _dataSource = dataSourceBuilder.Build();
+            _logger.LogInformation("DbConnectionManager - Connection to database established");
         }
 
-        public async Task<NpgsqlConnection> CreateConnection()
+        /// <summary>
+        /// Creates and returns a connection to the database.
+        /// </summary>
+        public IDbConnection CreateConnection()
         {
             try
             {
                 _logger.LogInformation("DbConnectionManager - Creating db connection");
-                var dbConnection = await _dataSource.OpenConnectionAsync();
+                var dbConnection = _dataSource.OpenConnection();
                 _logger.LogInformation("DbConnectionManager - Db connection created");
                 return dbConnection;
             }
@@ -66,6 +72,7 @@ namespace HyperCrawlX.DAL
                                 $"Connection Idle Lifetime=300;Connection Pruning Interval=60;" +
                                 $"SSL Mode=Prefer;Trust Server Certificate=true;";
 
+            // TODO: Remove connection string from logs
             _logger.LogInformation($"DbConnectionManager - Connection string created: {connectionString}");
             return connectionString;
         }

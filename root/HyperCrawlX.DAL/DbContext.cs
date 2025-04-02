@@ -1,4 +1,5 @@
-﻿using HyperCrawlX.DAL.Interfaces;
+﻿using Dapper;
+using HyperCrawlX.DAL.Interfaces;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data;
@@ -64,11 +65,14 @@ namespace HyperCrawlX.DAL
             }
         }
 
-        public async Task<dynamic> ExecuteAsync(string sql, object? parameters = null)
+        /*public async Task<dynamic> ExecuteAsync(string sql, object? parameters = null)
         {
             try
             {
-                using var connection = await _dbConnectionManager.CreateConnection();
+                using var connection =  _dbConnectionManager.CreateConnection();
+                DynamicParameters dynamicParameters = new();
+                dynamicParameters.Add("hierUnitId", 23, DbType.Int64, ParameterDirection.Input);
+                connection.ExecuteAsync(sql, parameters);
                 using var command = CreateCommand(connection, sql, parameters);
 
                 return await command.ExecuteNonQueryAsync();
@@ -79,5 +83,30 @@ namespace HyperCrawlX.DAL
                 throw;
             }
         }
+
+
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? parameters = null)
+        {
+            try
+            {
+                using var connection = await _dbConnectionManager.CreateConnection();
+                using var command = CreateCommand(connection, sql, parameters);
+
+                var results = new List<T>();
+                using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    results.Add(MapData<T>(reader));
+                }
+
+                return results;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error executing QueryAsync: {Sql}", sql);
+                throw;
+            }
+        }*/
     }
 }

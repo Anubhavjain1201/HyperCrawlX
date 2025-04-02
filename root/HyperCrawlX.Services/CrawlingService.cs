@@ -1,4 +1,5 @@
 ﻿using HyperCrawlX.DAL.Interfaces;
+using HyperCrawlX.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace HyperCrawlX.Services

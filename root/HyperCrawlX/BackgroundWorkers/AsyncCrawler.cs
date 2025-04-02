@@ -1,4 +1,4 @@
-﻿using HyperCrawlX.Services;
+﻿using HyperCrawlX.Services.Interfaces;
 
 namespace HyperCrawlX.BackgroundWorkers
 {
