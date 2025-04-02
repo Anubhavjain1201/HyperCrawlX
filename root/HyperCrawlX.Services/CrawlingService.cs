@@ -64,7 +64,8 @@ namespace HyperCrawlX.Services
 
         private void InsertProductUrls(CrawlRequest request, List<string> productUrls)
         {
-
+            _crawlServiceRepository.BulkInsertUrls(request.RequestId, productUrls);
+            return;
         }
 
         /// <summary>

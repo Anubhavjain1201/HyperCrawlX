@@ -9,5 +9,7 @@
         public const string POSTGRES_PASSWORD = "POSTGRES_PASSWORD";
         public const string POSTGRES_MIN_POOL_SIZE = "POSTGRES_MIN_POOL_SIZE";
         public const string POSTGRES_MAX_POOL_SIZE = "POSTGRES_MAX_POOL_SIZE";
+
+        public const int BATCH_SIZE = 5000;
     }
 }

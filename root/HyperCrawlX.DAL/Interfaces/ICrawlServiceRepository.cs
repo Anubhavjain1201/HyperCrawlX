@@ -7,5 +7,7 @@ namespace HyperCrawlX.DAL.Interfaces
         void UpdateRequestStatus(long requestId, int status);
 
         Task<CrawlRequest?> GetPendingCrawlRequest();
+
+        void BulkInsertUrls(long requestId, List<string> urls);
     }
 }

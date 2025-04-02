@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using HyperCrawlX.DAL.Constants;
 using HyperCrawlX.DAL.Interfaces;
 using HyperCrawlX.Models;
 using Microsoft.Extensions.Logging;
@@ -60,6 +61,41 @@ namespace HyperCrawlX.DAL.Repositories
 
             _logger.LogInformation("CrawlServiceRepository - Fetched pending crawl request");
             return taskResult.ToList().FirstOrDefault();
+        }
+
+        public async void BulkInsertUrls(long requestId, List<string> urls)
+        {
+            _logger.LogInformation($"CrawlServiceRepository - Inserting product urls");
+
+            // Split the URLs into batches
+            var batches = urls.Chunk(DbConstants.BATCH_SIZE);
+
+            // Create connection
+            using IDbConnection conn = _dbConnectionManager.CreateConnection();
+
+            foreach(var batch in batches)
+            {
+                var dynamicParams = new DynamicParameters();
+                var values = new List<string>();
+
+                for (int i = 0; i < batch.Length; i++)
+                {
+                    var paramRequestId = $"@RequestId{i}";
+                    var paramUrl = $"@Url{i}";
+
+                    dynamicParams.Add(paramRequestId, requestId, DbType.Int64, ParameterDirection.Input);
+                    dynamicParams.Add(paramUrl, batch[i], DbType.String, ParameterDirection.Input);
+
+                    values.Add($"({paramRequestId}, {paramUrl})");
+                }
+
+                // Define the SQL query to execute
+                var sql = $"INSERT INTO CRAWLED_URL (RequestId, Url) VALUES {string.Join(", ", values)}";
+                await conn.ExecuteAsync(sql, dynamicParams);
+            }
+
+            _logger.LogInformation($"CrawlServiceRepository - Product Urls inserted");
+            return;
         }
     }
 }
