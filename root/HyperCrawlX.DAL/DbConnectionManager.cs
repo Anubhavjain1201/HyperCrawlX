@@ -1,9 +1,11 @@
 ﻿using HyperCrawlX.DAL.Constants;
 using HyperCrawlX.DAL.Interfaces;
+using HyperCrawlX.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data;
+using System.Net;
 
 namespace HyperCrawlX.DAL
 {
@@ -47,7 +49,7 @@ namespace HyperCrawlX.DAL
             catch (Exception ex)
             {
                 _logger.LogError($"DbConnectionManager - Exception occurred while creating db connection: {ex.Message}");
-                throw;
+                throw new CustomException((int)HttpStatusCode.InternalServerError, $"Exception occurred while creating db connection");
             }
         }
 

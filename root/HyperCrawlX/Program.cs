@@ -1,5 +1,6 @@
 using HyperCrawlX.BackgroundWorkers;
 using HyperCrawlX.DAL;
+using HyperCrawlX.Middlewares;
 using HyperCrawlX.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
@@ -34,9 +35,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseResponseCompression();
+
+app.AddCustomMiddlewares();
+app.UseCors(options =>
+{
+    options.AllowAnyMethod();
+    options.AllowAnyHeader();
+    options.AllowCredentials();
+    options.SetIsOriginAllowed(origin => true);
+});
+
+app.UseCors(options => options.AllowAnyOrigin());
+
 //app.UseHttpsRedirection();
 app.UseResponseCaching();
-app.UseResponseCompression();
 
 app.UseAuthorization();
 

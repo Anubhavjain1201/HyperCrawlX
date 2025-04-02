@@ -2,6 +2,7 @@
 using HyperCrawlX.Models;
 using HyperCrawlX.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace HyperCrawlX.Services
 {
@@ -43,14 +44,14 @@ namespace HyperCrawlX.Services
             if (requestId == null || requestId == 0)
             {
                 _logger.LogError("CrawlRequestService - requestId is a required field");
-                throw new Exception("requestId is a required field");
+                throw new CustomException((int)HttpStatusCode.BadRequest, "requestId is a required field");
             }
 
             bool isValidRequestId = await _crawlRequestRepository.IsValidRequestId((long)requestId);
             if (!isValidRequestId)
             {
                 _logger.LogError("CrawlRequestService - requestId is invalid");
-                throw new Exception("requestId is invalid");
+                throw new CustomException((int)HttpStatusCode.BadRequest, "requestId is invalid");
             }
 
             _logger.LogInformation("CrawlRequestService - Finished validating requestId");
@@ -66,7 +67,7 @@ namespace HyperCrawlX.Services
             if (string.IsNullOrWhiteSpace(url))
             {
                 _logger.LogError("CrawlRequestService - url is a required field");
-                throw new Exception("url is a required field");
+                throw new CustomException((int)HttpStatusCode.BadRequest, "url is a required field");
             }
 
             bool isValidUrl = Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult)
@@ -74,7 +75,7 @@ namespace HyperCrawlX.Services
             if (!isValidUrl)
             {
                 _logger.LogError("CrawlRequestService - url is invalid");
-                throw new Exception("url is invalid");
+                throw new CustomException((int)HttpStatusCode.BadRequest, "url is invalid");
             }
 
             _logger.LogInformation("CrawlRequestService - Finished validating url");
