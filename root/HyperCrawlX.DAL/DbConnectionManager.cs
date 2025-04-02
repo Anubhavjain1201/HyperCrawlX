@@ -72,8 +72,7 @@ namespace HyperCrawlX.DAL
                                 $"Connection Idle Lifetime=300;Connection Pruning Interval=60;" +
                                 $"SSL Mode=Prefer;Trust Server Certificate=true;";
 
-            // TODO: Remove connection string from logs
-            _logger.LogInformation($"DbConnectionManager - Connection string created: {connectionString}");
+            _logger.LogInformation($"DbConnectionManager - Connection string created");
             return connectionString;
         }
     }

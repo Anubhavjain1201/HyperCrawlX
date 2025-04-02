@@ -22,17 +22,30 @@ namespace HyperCrawlX.Services.Strategies
 
             IPlaywright? playwright = null;
             IBrowser? browser = null;
+            IBrowserContext? context = null;
             IPage? page = null;
 
             try
             {
+                // Initialize Headless browser using Playwright
                 playwright = await Playwright.CreateAsync();
                 browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
                 {
                     Headless = true,
-                    Args = ["--disable-dev-shm-usage", "--disable-gpu", "--no-sandbox", "--disable-http2"]
+                    Args = ["--disable-dev-shm-usage", 
+                        "--disable-gpu", 
+                        "--no-sandbox", 
+                        "--disable-blink-features=AutomationControlled", 
+                        "--disable-features=site-per-process", 
+                        "--disable-features=IsolateOrigins,site-per-process"],
+                    
                 });
-                page = await browser.NewPageAsync();
+                context = await browser.NewContextAsync(new BrowserNewContextOptions
+                {
+                    UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+                    BypassCSP = true
+                });
+                page = await context.NewPageAsync();
 
                 var visitedLinks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var queue = new ConcurrentQueue<string>();
@@ -109,7 +122,7 @@ namespace HyperCrawlX.Services.Strategies
                     }
                 }
 
-                _logger.LogInformation($"DynamicJavascriptStrategy - Visited {visitedLinks.Count} pages, Found {productUrls.Count} product URLs");
+                _logger.LogInformation($"DynamicJavascriptStrategy - Visited {visitCount} pages, Found {productUrls.Count} product URLs");
                 return productUrls;
             }
             catch (Exception ex)
@@ -122,14 +135,22 @@ namespace HyperCrawlX.Services.Strategies
                 // Dispose off the resources
                 if (page != null)
                 {
+                    _logger.LogInformation("DynamicJavascriptStrategy - Closing the page");
                     await page.CloseAsync();
+                }
+                if(context != null)
+                {
+                    _logger.LogInformation("DynamicJavascriptStrategy - Closing the context");
+                    await context.CloseAsync();
                 }
                 if (browser != null)
                 {
+                    _logger.LogInformation("DynamicJavascriptStrategy - Closing the browser");
                     await browser.CloseAsync();
                 }
                 if (playwright != null)
                 {
+                    _logger.LogInformation("DynamicJavascriptStrategy - Disposing off playwright");
                     playwright.Dispose();
                 }
             }

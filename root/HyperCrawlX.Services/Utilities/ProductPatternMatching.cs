@@ -9,7 +9,9 @@ namespace HyperCrawlX.Services.Utilities
             @"/product[s]?/", @"/item[s]?/", @"/p/", @"/pd/", @"/shop/",
             @"/buy/", @"/-pr-", @"/good[s]?/", @"/detail/", @"/prod[s]?-",
             @"/prod[s]?/", @"/detail[s]?/", @"/dp/", @"/B[A-Z0-9]{9,10}",
-            @"(product|item|catalog).*?(id|sku|code)=", @"/collection.*?/products/"
+            @"(product|item|catalog).*?(id|sku|code)=", @"/collection.*?/products/", 
+            @"/p-[\d]+", @"/product-[\d]+", @"/item-[\d]+", @"/prod-[\d]+",
+            @"/p-[^/]+"
         };
 
         private readonly static List<string> _nonProductPatterns = new List<string>

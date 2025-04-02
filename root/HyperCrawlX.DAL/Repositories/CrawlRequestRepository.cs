@@ -24,7 +24,18 @@ namespace HyperCrawlX.DAL.Repositories
             _logger.LogInformation("CrawlRequestRepository - Getting crawl request status");
 
             // Define the SQL query to execute
-            string sql = @"";
+            string sql = @"SELECT 
+                            cr.RequestId, 
+                            cr.Status, cr.Url, 
+                            NULLIF(COUNT(cu.Id), 0) AS ProductUrlsCount,
+                            CASE 
+                                WHEN COUNT(cu.Id) = 0 THEN NULL 
+                                ELSE ARRAY_AGG(cu.Url) 
+                            END AS ProductUrls
+                           FROM CRAWL_REQUEST cr
+                           LEFT JOIN CRAWLED_URL cu ON cu.RequestId = cr.RequestId
+                           WHERE cr.RequestId = @RequestId
+                           GROUP BY cr.RequestId";
 
             // Define the parameters to pass to the query
             DynamicParameters dynamicParams = new DynamicParameters();

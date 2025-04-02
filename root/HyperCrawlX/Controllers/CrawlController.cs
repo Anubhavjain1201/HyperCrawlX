@@ -1,3 +1,4 @@
+using HyperCrawlX.Models;
 using HyperCrawlX.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,17 +20,17 @@ namespace HyperCrawlX.Controllers
         }
 
 
-        [HttpPost("getRequestStatus")]
-        public async Task<IActionResult> GetCrawlStatus([FromBody] long? requestId)
+        [HttpGet("getRequestStatus/{requestId}")]
+        public async Task<IActionResult> GetCrawlStatus(long requestId)
         {
             var result = await _crawlRequestService.GetCrawlRequestStatus(requestId);
             return Ok(result);
         }
 
         [HttpPost("submitCrawlRequest")]
-        public async Task<IActionResult> SubmitCrawlRequest([FromBody] string? url)
+        public async Task<IActionResult> SubmitCrawlRequest([FromBody] CrawlRequest crawlRequest)
         {
-            var result = await _crawlRequestService.SubmitCrawlRequest(url);
+            var result = await _crawlRequestService.SubmitCrawlRequest(crawlRequest.Url);
             return Ok(result);
         }
     }

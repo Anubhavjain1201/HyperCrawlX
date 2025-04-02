@@ -20,6 +20,6 @@ namespace HyperCrawlX.Models
 
         [JsonPropertyName("productUrls")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public HashSet<string>? ProductUrls { get; set; }
+        public string[]? ProductUrls { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace HyperCrawlX.Services.Strategies
     public class HttpCrawlingStrategy : ICrawlingStrategy
     {
         private ILogger<HttpCrawlingStrategy> _logger;
+        private const int MAX_VISIT_COUNT = 200;
 
         public HttpCrawlingStrategy(ILogger<HttpCrawlingStrategy> logger)
         {
@@ -21,18 +22,15 @@ namespace HyperCrawlX.Services.Strategies
                 var visitedLinks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var queue = new ConcurrentQueue<string>();
                 var productUrls = new HashSet<string>();
+                var baseUri = new Uri(url);
+                int visitCount = 0;
 
                 queue.Enqueue(url);
                 visitedLinks.Add(url);
 
-                // TODO: Also add maximum page visit limit
-                while (queue.TryDequeue(out var currentUrl))
+                while (queue.TryDequeue(out var currentUrl) && visitCount < MAX_VISIT_COUNT)
                 {
-                    if (ProductPatternMatching.isProductUrl(currentUrl))
-                    {
-                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {currentUrl}");
-                        productUrls.Add(currentUrl);
-                    }
+                    visitCount++;
 
                     HttpResponseMessage? response = null;
                     string html;
@@ -46,9 +44,6 @@ namespace HyperCrawlX.Services.Strategies
                     var htmlDocument = new HtmlDocument();
                     htmlDocument.LoadHtml(html);
 
-                    // Get the base URI
-                    var baseUri = new Uri(url);
-
                     var discoveredLinks = new HashSet<string>();
                     var anchorNodes = htmlDocument.DocumentNode.SelectNodes("//a[@href]");
                     if (anchorNodes != null)
@@ -60,27 +55,32 @@ namespace HyperCrawlX.Services.Strategies
                             if (string.IsNullOrWhiteSpace(href))
                                 continue;
 
-                            // Only consider absolute links from the same domain
                             if (Uri.TryCreate(baseUri, href, out var absoluteUri))
                             {
+                                // Only consider absolute links from the same domain
                                 if (absoluteUri.Host == baseUri.Host)
-                                    discoveredLinks.Add(absoluteUri.ToString());
+                                {
+                                    var urlString = absoluteUri.ToString();
+
+                                    if (ProductPatternMatching.isProductUrl(urlString))
+                                    {
+                                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {urlString}");
+                                        productUrls.Add(urlString);
+                                    }
+
+                                    if (!visitedLinks.Contains(urlString))
+                                    {
+                                        // Add link to the queue and to the visited set
+                                        queue.Enqueue(urlString);
+                                        visitedLinks.Add(urlString);
+                                    }
+                                }
                             }
-                        }
-                    }
-                        
-                    foreach (var link in discoveredLinks ?? Enumerable.Empty<string>())
-                    {
-                        if (!visitedLinks.Contains(link))
-                        {
-                            // Add link to the queue and to the visited set
-                            queue.Enqueue(link);
-                            visitedLinks.Add(link);
                         }
                     }
                 }
 
-                _logger.LogInformation($"HttpCrawlingStrategy - Visited {visitedLinks.Count} pages, Found {productUrls.Count} product URLs");
+                _logger.LogInformation($"HttpCrawlingStrategy - Visited {visitCount} pages, Found {productUrls.Count} product URLs");
                 return productUrls;
             }
             catch (Exception ex)
