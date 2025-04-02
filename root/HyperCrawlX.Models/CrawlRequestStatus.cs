@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using HyperCrawlX.Models.Enums;
+using System.Text.Json.Serialization;
 
 namespace HyperCrawlX.Models
 {
@@ -8,10 +9,14 @@ namespace HyperCrawlX.Models
         public long RequestId { get; set; }
 
         [JsonPropertyName("status")]
-        public string? Status { get; set; }
+        public CrawlRequestStatusEnum Status { get; set; }
 
         [JsonPropertyName("url")]
         public string? Url { get; set; }
+
+        [JsonPropertyName("productUrlsCount")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public long? ProductUrlsCount { get; set; }
 
         [JsonPropertyName("productUrls")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

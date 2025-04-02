@@ -14,13 +14,13 @@ namespace HyperCrawlX.Services.Strategies
             _logger = logger;
         }
 
-        public async Task<IList<string>> ExecuteAsync(string url)
+        public async Task<HashSet<string>> ExecuteAsync(string url)
         {
             try
             {
                 var visitedLinks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var queue = new ConcurrentQueue<string>();
-                var productUrls = new List<string>();
+                var productUrls = new HashSet<string>();
 
                 queue.Enqueue(url);
                 visitedLinks.Add(url);
@@ -30,8 +30,8 @@ namespace HyperCrawlX.Services.Strategies
                 {
                     if (ProductPatternMatching.isProductUrl(currentUrl))
                     {
-                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {url}");
-                        productUrls.Add(url);
+                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {currentUrl}");
+                        productUrls.Add(currentUrl);
                     }
 
                     HttpResponseMessage? response = null;

@@ -35,7 +35,7 @@ namespace HyperCrawlX.DAL.Repositories
             IEnumerable<CrawlRequestStatus> taskResult = await conn.QueryAsync<CrawlRequestStatus>(sql, dynamicParams);
 
             _logger.LogInformation("CrawlRequestRepository - Fetched crawl request status");
-            return taskResult.ToList().FirstOrDefault();
+            return taskResult.ToList().FirstOrDefault()!;
         }
 
         public async Task<bool> IsValidRequestId(long requestId)
@@ -62,8 +62,8 @@ namespace HyperCrawlX.DAL.Repositories
             _logger.LogInformation($"CrawlRequestRepository - Submitting crawl request for the url: {url}");
 
             // Define the SQL query to execute
-            string sql = @"INSERT INTO CRAWL_REQUEST (Url, Status, Created_At)
-                           VALUES (@url, 1, NOW())
+            string sql = @"INSERT INTO CRAWL_REQUEST (Url, Status)
+                           VALUES (@url, 1)
                            RETURNING RequestId";
 
             // Define the parameters to pass to the query

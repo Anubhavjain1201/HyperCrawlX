@@ -19,7 +19,7 @@ namespace HyperCrawlX.Controllers
         }
 
 
-        [HttpGet("getRequestStatus")]
+        [HttpPost("getRequestStatus")]
         public async Task<IActionResult> GetCrawlStatus([FromBody] long? requestId)
         {
             var result = await _crawlRequestService.GetCrawlRequestStatus(requestId);

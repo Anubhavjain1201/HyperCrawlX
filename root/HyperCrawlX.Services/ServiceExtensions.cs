@@ -1,4 +1,5 @@
 ﻿using HyperCrawlX.Services.Interfaces;
+using HyperCrawlX.Services.Strategies;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HyperCrawlX.Services
@@ -9,6 +10,9 @@ namespace HyperCrawlX.Services
         {
             services.AddScoped<ICrawlingService, CrawlingService>();
             services.AddScoped<ICrawlRequestService, CrawlRequestService>();
+
+            services.AddTransient<ICrawlingStrategy, DynamicJavascriptStrategy>();
+            services.AddTransient<ICrawlingStrategy, HttpCrawlingStrategy>();
             return services;
         }
     }

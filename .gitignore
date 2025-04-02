@@ -507,3 +507,6 @@ FodyWeavers.xsd
 
 # Mac Os
 .DS_Store
+
+data
+docker-compose.yml

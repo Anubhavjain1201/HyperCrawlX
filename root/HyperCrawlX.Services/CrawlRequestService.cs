@@ -1,4 +1,4 @@
-﻿using HyperCrawlX.DAL.Repositories;
+﻿using HyperCrawlX.DAL.Interfaces;
 using HyperCrawlX.Models;
 using HyperCrawlX.Services.Interfaces;
 using Microsoft.Extensions.Logging;

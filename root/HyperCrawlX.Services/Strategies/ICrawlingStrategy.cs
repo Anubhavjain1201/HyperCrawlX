@@ -2,6 +2,6 @@
 {
     public interface ICrawlingStrategy
     {
-        Task<IList<string>> ExecuteAsync(string url);
+        Task<HashSet<string>> ExecuteAsync(string url);
     }
 }

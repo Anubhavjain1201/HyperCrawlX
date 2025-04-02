@@ -12,6 +12,6 @@ namespace HyperCrawlX.Models
 
         [JsonPropertyName("requestedDateTime")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public DateTime RequestedDateTime { get; set; }
+        public DateTime Created_At { get; set; }
     }
 }

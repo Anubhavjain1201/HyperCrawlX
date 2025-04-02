@@ -29,7 +29,7 @@ namespace HyperCrawlX.BackgroundWorkers
                         {
                             ICrawlingService crawlingService = scope.ServiceProvider.GetRequiredService<ICrawlingService>();
                             IsCurrentlyProcessing = true;
-                            crawlingService.ProcessCrawlRequest();
+                            crawlingService.FindAndProcessCrawlRequest();
                         }
                     }
                     catch (Exception ex)

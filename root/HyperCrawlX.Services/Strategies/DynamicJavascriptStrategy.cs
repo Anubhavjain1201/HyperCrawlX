@@ -8,58 +8,65 @@ namespace HyperCrawlX.Services.Strategies
     public class DynamicJavascriptStrategy : ICrawlingStrategy
     {
         private ILogger<DynamicJavascriptStrategy> _logger;
+        private const int MAX_VISIT_COUNT = 200;
+        private const int MAX_SCROLL_COUNT = 5;
 
         public DynamicJavascriptStrategy(ILogger<DynamicJavascriptStrategy> logger)
         {
             _logger = logger;
         }
 
-        public async Task<IList<string>> ExecuteAsync(string url)
+        public async Task<HashSet<string>> ExecuteAsync(string url)
         {
             _logger.LogInformation($"DynamicJavascriptStrategy - Fetching product urls for: {url}");
 
-            var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            {
-                Headless = true,
-                Args = ["--disable-dev-shm-usage", "--disable-gpu", "--no-sandbox"]
-            });
-            var page = await browser.NewPageAsync();
+            IPlaywright? playwright = null;
+            IBrowser? browser = null;
+            IPage? page = null;
 
             try
             {
+                playwright = await Playwright.CreateAsync();
+                browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+                {
+                    Headless = true,
+                    Args = ["--disable-dev-shm-usage", "--disable-gpu", "--no-sandbox", "--disable-http2"]
+                });
+                page = await browser.NewPageAsync();
+
                 var visitedLinks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var queue = new ConcurrentQueue<string>();
-                var productUrls = new List<string>();
+                var productUrls = new HashSet<string>();
                 var baseUri = new Uri(url);
+                int visitCount = 0;
 
                 queue.Enqueue(url);
                 visitedLinks.Add(url);
 
-                // TODO: Also add maximum page visit limit
-                while (queue.TryDequeue(out var currentUrl))
+                while (queue.TryDequeue(out var currentUrl) && visitCount < MAX_VISIT_COUNT)
                 {
-                    // Check if the current URL is a product URL
-                    if (ProductPatternMatching.isProductUrl(currentUrl))
-                    {
-                        _logger.LogInformation($"HttpCrawlingStrategy - Found product url: {url}");
-                        productUrls.Add(url);
-                    }
+                    visitCount++;
 
                     // Navigate to the URL
                     var response = await page.GotoAsync(currentUrl, new PageGotoOptions
                     {
-                        WaitUntil = WaitUntilState.NetworkIdle,
+                        WaitUntil = WaitUntilState.DOMContentLoaded,
                     });
 
+                    // If the response is not OK,
+                    // 1. Log the error
+                    // 2. Remove the URL from the list of product URLs
+                    // 3. Continue to the next URL
                     if (response == null || !response.Ok)
                     {
-                        _logger.LogError($"DynamicJavascriptStrategy - Error occurred while fetching {url}");
-                        throw new Exception($"Error occurred while fetching content from: {url}");
+                        _logger.LogError($"DynamicJavascriptStrategy - Error occurred while fetching {currentUrl}, statusCode: {response?.Status}");
+                        productUrls.Remove(currentUrl);
+                        continue;
                     }
 
                     // Scroll to the bottom of the page to load all the content
-                    while (true)
+                    int scrollCount = 0;
+                    while (scrollCount < MAX_SCROLL_COUNT)
                     {
                         var previousHeight = await page.EvaluateAsync<int>("document.body.scrollHeight");
                         await page.EvaluateAsync("window.scrollTo(0, document.body.scrollHeight);");
@@ -67,6 +74,7 @@ namespace HyperCrawlX.Services.Strategies
                         var newHeight = await page.EvaluateAsync<int>("document.body.scrollHeight");
 
                         if (newHeight == previousHeight) break;
+                        scrollCount++;
                     }
 
                     // Get all links from the page
@@ -84,6 +92,13 @@ namespace HyperCrawlX.Services.Strategies
                             if (absoluteUri.Host == baseUri.Host)
                             {
                                 var urlString = absoluteUri.ToString();
+
+                                if (ProductPatternMatching.isProductUrl(urlString))
+                                {
+                                    _logger.LogInformation($"DynamicJavascriptStrategy - Found product url: {urlString}");
+                                    productUrls.Add(urlString);
+                                }
+
                                 if (!visitedLinks.Contains(urlString))
                                 {
                                     queue.Enqueue(urlString);
