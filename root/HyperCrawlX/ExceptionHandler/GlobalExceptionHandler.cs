@@ -1,5 +1,4 @@
-﻿using HyperCrawlX.Middlewares;
-using HyperCrawlX.Models;
+﻿using HyperCrawlX.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
 using System.Text.Json;

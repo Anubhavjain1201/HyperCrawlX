@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace HyperCrawlX.Middlewares
+namespace HyperCrawlX.ExceptionHandler
 {
     public class ErrorDetailDTO
     {
