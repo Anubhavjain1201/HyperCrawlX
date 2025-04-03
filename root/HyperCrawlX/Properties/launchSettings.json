@@ -26,13 +26,16 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
+        // ----------Local DB credentials--------------
         "POSTGRES_HOST": "localhost",
         "POSTGRES_PORT": "5432",
         "POSTGRES_DB": "CrawlDB",
         "POSTGRES_USER": "HyperCrawlX_ROOT",
         "POSTGRES_PASSWORD": "HCX1204CDB",
         "POSTGRES_MIN_POOL_SIZE": "5",
-        "POSTGRES_MAX_POOL_SIZE": "200"
+        "POSTGRES_MAX_POOL_SIZE": "200",
+        // --------------------------------------------
+        "MAX_PAGE_VISIT_COUNT" : "20"
       }
     },
     "Container (Dockerfile)": {

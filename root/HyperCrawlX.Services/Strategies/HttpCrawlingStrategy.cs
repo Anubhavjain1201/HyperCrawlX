@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using HyperCrawlX.Services.Utilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
@@ -8,11 +9,17 @@ namespace HyperCrawlX.Services.Strategies
     public class HttpCrawlingStrategy : ICrawlingStrategy
     {
         private ILogger<HttpCrawlingStrategy> _logger;
-        private const int MAX_VISIT_COUNT = 200;
+        private readonly IConfiguration _configuration;
+        private readonly int MAX_VISIT_COUNT;
 
-        public HttpCrawlingStrategy(ILogger<HttpCrawlingStrategy> logger)
+        public HttpCrawlingStrategy(
+            ILogger<HttpCrawlingStrategy> logger,
+            IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
+            var value = Environment.GetEnvironmentVariable("MAX_PAGE_VISIT_COUNT") ?? _configuration.GetValue<string>("MAX_PAGE_VISIT_COUNT");
+            MAX_VISIT_COUNT = int.TryParse(value, out int maxVisitCount) ? maxVisitCount : 200;
         }
 
         public async Task<HashSet<string>> ExecuteAsync(string url)
