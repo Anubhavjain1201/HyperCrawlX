@@ -9,6 +9,7 @@ Leveraging modern web scraping technologies, it enables seamless extraction of e
 - **Asynchronous Processing** with multiple workers
 - High-performance scraping using **Playwright** and **HtmlAgilityPack**
 - **PostgreSQL** for structured data storage with **Connection Pooling** for efficient DB connection management.
+- Containerized using **Docker**
 - Cloud-based deployment on **AWS ECS** and **Render**
 
 ## High-Level Design
@@ -18,7 +19,7 @@ Leveraging modern web scraping technologies, it enables seamless extraction of e
 - **Backend:** .NET Core, C#
 - **Database:** PostgreSQL
 - **Scraping:** Playwright, HtmlAgilityPack
-- **Cloud:** AWS ECS, Render
+- **Deployment:** Docker, AWS ECS, Render
 
 ## 📌 Usage
 HyperCrawlX operates as a web application. Users can interact with the crawler via its API endpoints.
@@ -63,6 +64,10 @@ This API is used to check the status of the request. The status can be one of th
 2. InProgress
 3. Completed
 4. Failed
+
+## 🐳 Docker Image
+Here is the docker image tag for this app
+`anu1201d/apps-pub-repo:hypercrawlx`
 
 ---
 
