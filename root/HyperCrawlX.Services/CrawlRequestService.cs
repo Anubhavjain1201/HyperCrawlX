@@ -22,7 +22,7 @@ namespace HyperCrawlX.Services
         /// <inheritdoc/>
         public async Task<CrawlRequestStatus> GetCrawlRequestStatus(long? requestId)
         {
-            ValidateRequestId(requestId);
+            await ValidateRequestId(requestId);
             return await _crawlRequestRepository.GetCrawlRequestStatus(requestId);
         }
 
@@ -37,7 +37,7 @@ namespace HyperCrawlX.Services
         /// <summary>
         /// Validates the requestId
         /// </summary>
-        private async void ValidateRequestId(long? requestId)
+        private async Task ValidateRequestId(long? requestId)
         {
             _logger.LogInformation("CrawlRequestService - Validating requestId");
 

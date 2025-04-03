@@ -35,7 +35,6 @@ namespace HyperCrawlX.BackgroundWorkers
                     catch (Exception ex)
                     {
                         _logger.LogError($"AsyncCrawler - Exception occurred while processing the request: {ex.Message}");
-                        // update the request status to failed.
                     }
                     IsCurrentlyProcessing = false;
                 }

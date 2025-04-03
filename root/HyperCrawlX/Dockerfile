@@ -1,25 +1,21 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+# Use official .NET Playwright image
+FROM mcr.microsoft.com/playwright/dotnet:v1.51.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["HyperCrawlX/HyperCrawlX.csproj", "HyperCrawlX/"]
-RUN dotnet restore "./HyperCrawlX/HyperCrawlX.csproj"
 COPY . .
-WORKDIR "/src/HyperCrawlX"
-RUN dotnet build "./HyperCrawlX.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./root/HyperCrawlX/HyperCrawlX.csproj" -c Release -o /app/build
 
+
+# Publish stage
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./HyperCrawlX.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./root/HyperCrawlX/HyperCrawlX.csproj" -c Release -o /app/publish
 
+# Final stage
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "HyperCrawlX.dll"]

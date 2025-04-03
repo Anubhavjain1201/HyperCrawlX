@@ -1,6 +1,6 @@
 using HyperCrawlX.BackgroundWorkers;
 using HyperCrawlX.DAL;
-using HyperCrawlX.Middlewares;
+using HyperCrawlX.ExceptionHandler;
 using HyperCrawlX.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.RegisterServices();
 builder.Services.RegisterDbDependencies();
 builder.Services.AddHostedService<AsyncCrawler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Use Gzip compression
 builder.Services.Configure<GzipCompressionProviderOptions>
@@ -27,6 +28,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseExceptionHandler(_ => { });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,7 +39,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseResponseCompression();
 
-app.AddCustomMiddlewares();
 app.UseCors(options =>
 {
     options.AllowAnyMethod();
